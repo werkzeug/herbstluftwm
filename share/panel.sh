@@ -69,8 +69,10 @@ hc pad $monitor $panel_height
         sleep 1 || break
     done > >(uniq_linebuffered) &
     childpid=$!
-    hc --idle
-    kill $childpid
+    herbstclient --idle &
+    hcpid=$!
+    hc -w '(quit_panel|reload)'
+    kill $hcpid $childpid
 } 2> /dev/null | {
     IFS=$'\t' read -ra tags <<< "$(hc tag_status $monitor)"
     visible=true
